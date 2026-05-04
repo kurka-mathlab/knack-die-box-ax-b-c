@@ -566,7 +566,7 @@
 
 
 .help-text {
-  text-align: left;
+  text-align: center;   
   font-size: 18px;
   line-height: 1.35;
   color: #2d2a26;
@@ -820,6 +820,17 @@
   position: static;
   align-self: flex-end; /* 👉 rechtsbündig */
 }
+.action-buttons {
+  display: flex;
+  justify-content: space-between; /* ← wichtig */
+  width: 100%;
+}
+
+  .action-buttons button {
+  min-width: 140px;
+}
+
+  
 }
     
   </style>
