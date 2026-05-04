@@ -575,14 +575,24 @@
 
 .help-actions {
   display: flex;
-  justify-content: center;
+  justify-content: center;  /* bleibt */
   gap: 10px;
   margin-top: 18px;
-  flex-wrap: wrap;
 }
 
 .help-actions button {
   min-width: 160px;
+}
+
+    .help-action-btn {
+  background: #f2c94c; /* gleiche Farbe wie Help-Button */
+  color: #5e241c;       /* dein dunkles Rotbraun */
+
+  min-width: 180px;
+}
+
+    .help-action-btn:hover {
+  background: #e0b83f;
 }
 
     .material-icons {
@@ -802,13 +812,13 @@
 
   .action-row {
   flex-direction: column;
+  align-items: stretch; /* wichtig! */
   gap: 10px;
 }
 
 .help-btn {
   position: static;
-  width: 46px;
-  height: 46px;
+  align-self: flex-end; /* 👉 rechtsbündig */
 }
 }
     
@@ -881,7 +891,6 @@
     <div id="helpText" class="help-text"></div>
 
     <div id="helpActions" class="help-actions">
-      <button class="reset-btn" onclick="closeHelpOverlay()">Das reicht mir</button>
       <button class="solution-btn" onclick="showSecondHint()">Gib mir noch einen Tipp!</button>
     </div>
   </div>
