@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+  <title>Knack die Box – Gleichungen lösen</title>
+
+  <style>
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+    
+    :root {
+      --bg: #f7f2e8;
+      --card: #fffaf0;
+      --ink: #2d2a26;
+      --accent: #8b5e34;
+      --green: #3c8d57;
+      --red: #d62828;
+      --line: #d8c7aa;
+      --selected: #f7b731;
+      
+      --task: #8b3a2e;
+      --task-hover: #a04636;
+      --task-active: #5e241c;
+
+      --solution: #3c8d57;
+      --solution-hover: #4fa36a;
+
+      --bg-main: #f3e4e1;
+--bg-gradient-top: #f7ebe8;
+--bg-gradient-bottom: #ead3cd;
+
+      --panel-bg: #f6e9e6;
+--panel-border: #c89b91;
+--panel-inner: rgba(255,255,255,0.6);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, var(--bg-gradient-top), var(--bg-gradient-bottom));
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.header h1 {
+  margin: 0;
+  font-family: 'Satisfy', cursive;
+  font-size: 58px;
+  color: #5e241c;
+  text-align: center;
+  position: relative;
+}
+
+.header-subtitle {
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: #5e241c;
+  opacity: 0.85;
+
+  width: max-content;
+  margin-top: -6px;
+  margin-left: 170px; /* damit es etwa ab Mitte h1 beginnt */
+}
+    
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .task-switcher {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px 0;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+    /* Button Styles */
+      button {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 14px;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,.12);
+  transition: all 0.15s ease;
+}
+
+    .task-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+    .action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 0 10px 0;
+}
+
+.action-buttons button {
+  min-width: 150px;
+}
+
+  button:disabled {
+  filter: none;
+}
+
+.task-btn {
+  background: var(--task);
+}
+
+    .task-btn:hover {
+  background: var(--task-hover);
+}
+
+    .task-btn.active-task {
+  background: var(--task-active);
+}
+
+.solution-btn,
+.check-btn {
+  background: var(--solution);
+}
+
+.solution-btn:hover,
+.check-btn:hover {
+  background: var(--solution-hover);
+}
+
+.solution-btn:hover {
+  background: var(--solution-hover);
+}
+
+    .reset-btn {
+  background: #6c757d;
+}
+
+  .reset-btn:hover {
+  background: #5a6268;
+}
+
+.task-btn:hover {
+  background: var(--task-hover);
+}
+    
+    
+   .task-switcher button.active-task {
+  background: var(--task-active);
+  transform: scale(1.05);
+  box-shadow: 0 0 0 4px rgba(139, 58, 46, 0.25);
+}
+
+    .solution-btn {
+  background: var(--solution);
+}
+
+.solution-btn:hover {
+  background: var(--solution-hover);
+}
+
+    button:hover { filter: brightness(1.08); }
+    button:active { transform: scale(0.97); }
+
+    .question-box {
+      background: white;
+      border: 2px solid #5e241c;
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: normal;
+      box-shadow: 0 8px 20px rgba(0,0,0,.06);
+    }
+
+    #questionText { white-space: pre-line;
+                  line-height: 1.2;
+                  }
+
+    #questionText strong {
+  font-weight: bold;       /* wichtig */
+}
+
+    .solution {
+      margin-top: 10px;
+      font-size: 20px;
+      color: var(--green);
+      display: none;
+    }
+
+    .solution.visible { display: block; }
+
+    .equation-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+
+  background:
+  linear-gradient(135deg, #f4ddb3, #e2c391),
+  repeating-linear-gradient(
+    90deg,
+    rgba(0,0,0,0.02) 0px,
+    rgba(0,0,0,0.02) 2px,
+    transparent 2px,
+    transparent 6px
+    );
+ /* dunkelbraunen Rand entfernt border: 8px solid #c89a5b; */
+  border-radius: 32px;
+  padding: 20px;
+  box-shadow:
+  inset 0 0 0 3px rgba(255,255,255,0.35),   /* helle Kante */
+  inset 0 0 12px rgba(0,0,0,0.08),          /* leichte Tiefe */
+  0 12px 28px rgba(0,0,0,0.18);             /* Schatten außen */
+}
+
+    .side {
+  background: transparent;
+  border: none;
+  border-radius: 18px;
+  min-height: 360px;
+  padding: 16px;
+  box-shadow: none;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+   .side:active {
+  transform: scale(0.99);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.08);
+}
+
+   .side.return-target .items {
+  border-color: var(--task-active);
+  box-shadow: 0 0 0 4px rgba(94, 36, 28, 0.18);
+}
+
+    .value-info {
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 14px;
+      color: #66584a;
+    }
+
+    .items {
+  min-height: 250px;
+  border: none;                /* gestrichelte Linie weg */
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-content: flex-start;
+
+  background: transparent;     /* komplett durchsichtig */
+}
+
+    .equals {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      position: relative;
+    }
+
+    .equals::before {
+  content: "";
+  width: 10px;
+  height: 100%;
+  min-height: 330px;
+  background: #111;
+  border-radius: 6px;
+  display: block;
+}
+
+   
+
+   .match {
+  width: 34px;
+  height: 75px;
+  background: url("match.png") center/contain no-repeat;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.box {
+  width: 150px;
+  height: 100px;
+  background: url("box.png") center/contain no-repeat;
+  cursor: pointer;
+  margin: 4px;
+}
+
+    .match:active,
+    .box:active {
+      transform: scale(0.95);
+          }
+
+    .pop-out {
+      animation: popOut 0.22s ease forwards;
+    }
+
+    @keyframes popOut {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.18); opacity: 0.85; }
+      100% { transform: scale(0.2); opacity: 0; }
+    }
+
+    .pop-in {
+      animation: popIn 0.25s ease;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.2); opacity: 0; }
+      70% { transform: scale(1.14); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+   .trash {
+  background: transparent;
+  border: 2px solid rgba(94, 36, 28, 0.5);
+  border-radius: 18px;
+  padding: 18px;
+  min-height: 155px;
+
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+
+  color: #5e241c;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,.06);
+}
+
+    .trash-title { margin-bottom: 4px; }
+
+    .return-hint {
+  margin-top: 10px;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  color: #5e241c; /* gleiche Farbe wie Überschrift */
+
+  background: rgba(94, 36, 28, 0.08);
+  padding: 8px 12px;
+  border-radius: 10px;
+
+  display: none;
+}
+
+    .return-hint.visible {
+  display: block;
+}
+
+    .removed-items {
+      margin-top: 14px;
+      min-height: 80px;
+      border-top: 2px solid #c89b91;
+      padding-top: 14px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .removed-items .selected {
+  outline: 5px solid var(--task-active);
+  outline-offset: 5px;
+  border-radius: 12px;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 4px rgba(139, 58, 46, 0.18);
+}
+
+    .overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 42, 38, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay-box {
+  background: white;
+  border: 4px solid var(--task-active);
+  border-radius: 24px;
+  padding: 28px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 12px 35px rgba(0,0,0,.25);
+}
+
+.overlay-box h2 {
+  margin-top: 0;
+  color: var(--task-active);
+}
+
+#overlaySolutionText {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--green);
+}
+
+.overlay-box {
+  position: relative; /* wichtig */
+}
+
+
+
+
+
+/* Lösungsüberprüfung */
+   
+        /* rotes x im Lösungsoverlay */
+.close-btn {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+
+  background: var(--task-active);
+  color: white;
+  border-radius: 50%;
+
+  width: 36px;
+  height: 36px;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;              /* wichtig */
+  border: none;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+    
+    #studentAnswer {
+  width: 100%;
+  max-width: 220px;
+  font-size: 24px;
+  padding: 10px;
+  text-align: center;
+  border: 3px solid var(--task-active);
+  border-radius: 12px;
+  margin: 10px 0;
+}
+
+
+#solutionFeedback {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+#solutionFeedback.correct {
+  color: var(--green);
+}
+
+#solutionFeedback.wrong {
+  color: var(--red);
+}
+
+.check-btn {
+  margin-top: 8px;
+  width: 100%;
+  max-width: 220px;
+  font-size: 22px;
+  padding: 10px;
+}
+    
+    .check-btn:disabled {
+  background: #b5b5b5;
+  color: #eee;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+    .next-task-btn {
+  margin-top: 14px;
+  background: var(--task-active);
+  width: 100%;
+  max-width: 220px;
+}
+
+.next-task-btn.hidden {
+  display: none;
+}
+
+    /* Tablet */
+   @media (max-width: 850px) {
+
+  body {
+    padding: 14px;
+  }
+
+  .header h1 {
+    font-size: 50px;
+  }
+
+  .header-subtitle {
+    font-size: 11px;
+    letter-spacing: 1.8px;
+    margin-left: 120px;
+    margin-top: -5px;
+  }
+
+  .app {
+    gap: 14px;
+  }
+
+  .task-switcher {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .task-switcher button {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .question-box {
+    font-size: 17px;
+    padding: 14px;
+    line-height: 1.25;
+  }
+
+  .equation-wrap {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px;
+    border-width: 6px;
+  }
+
+  .side {
+    min-height: 260px;
+    padding: 10px;
+  }
+
+  .items {
+    min-height: 190px;
+    padding: 10px;
+    gap: 6px;
+    background: transparent;     /* komplett durchsichtig */
+  }
+
+  .box {
+  width: 120px;
+  height: 80px;
+  margin: 2px;
+}
+
+  .match {
+  width: 28px;
+  height: 60px;
+  margin: 2px;
+}
+
+  .equals::before {
+    height: 260px;
+  }
+
+  .value-info {
+    font-size: 13px;
+  }
+
+  .trash {
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .removed-items {
+    gap: 8px;
+  }
+
+  .overlay-box {
+    max-width: 80vw;
+  }
+
+  #studentAnswer,
+  .check-btn {
+    max-width: 220px;
+    font-size: 22px;
+  }
+}
+
+    /* Smartphone */
+@media (max-width: 650px) {
+  body {
+    padding: 10px;
+  }
+
+  .header {
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-size: 42px;
+  }
+
+  .header-subtitle {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    margin-left: 90px;
+    margin-top: -4px;
+  }
+
+  .app {
+    gap: 12px;
+  }
+
+  .task-switcher {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .task-switcher button {
+    font-size: 13px;
+    padding: 9px 10px;
+    min-width: auto;
+  }
+
+  .question-box {
+    font-size: 15px;
+    padding: 12px;
+    line-height: 1.2;
+  }
+
+  .equation-wrap {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+    border-width: 6px;
+    border-radius: 20px;
+  }
+
+  .equals {
+    min-height: 28px;
+  }
+
+  .equals::before {
+    width: 100%;
+    height: 8px;
+    min-height: 8px;
+    background: #111;
+  }
+
+  .side {
+    min-height: 190px;
+    padding: 8px;
+  }
+
+  .items {
+    min-height: 145px;
+    padding: 8px;
+    gap: 4px;
+    background: transparent;     /* komplett durchsichtig */
+  }
+
+  .box {
+  width: 105px;
+  height: 70px;
+  margin: 2px;
+}
+
+  .match {
+  width: 24px;
+  height: 52px;
+  margin: 1px;
+}
+
+  .value-info {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .trash {
+    padding: 12px;
+    font-size: 15px;
+    min-height: 120px;
+  }
+
+  .removed-items {
+    gap: 6px;
+    padding-top: 10px;
+    min-height: 65px;
+  }
+
+  .overlay-box {
+    max-width: 92vw;
+    padding: 22px 16px;
+  }
+
+  #studentAnswer,
+  .check-btn {
+    max-width: 200px;
+    font-size: 20px;
+  }
+}
+    
+  </style>
+</head>
+
+<body>
+ <div class="header">
+  <h1>Knack die Box</h1>
+  <div class="header-subtitle">EINFACHE GLEICHUNGEN LÖSEN</div>
+</div>
+
+
+  <main class="app">
+    <section class="task-switcher">
+
+  <div class="task-buttons">
+<button class="task-btn" id="taskButton1" onclick="loadPreset(1)">Aufgabe 1</button>
+  <button class="task-btn" id="taskButton2" onclick="loadPreset(2)">Aufgabe 2</button>
+  <button class="task-btn" id="taskButton3" onclick="loadPreset(3)">Aufgabe 3</button>
+  <button class="task-btn" id="taskButton4" onclick="loadPreset(4)">Aufgabe 4</button>
+  <button class="task-btn" id="taskButton5" onclick="loadPreset(5)">Aufgabe 5</button>
+  </div>
+</section>
+
+    <section class="question-box">
+      <div id="questionText"></div>
+         </section>
+
+
+ <div class="action-buttons">
+  <button class="reset-btn" onclick="resetTask()">Zurücksetzen</button>
+  <button class="solution-btn" onclick="openSolutionOverlay()">Lösung prüfen</button>
+</div>
+    
+    <!-- Overlay für die Lösungseingabe -->
+    <div id="solutionOverlay" class="overlay hidden" onclick="closeSolutionOverlay()">
+  <div class="overlay-box" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeSolutionOverlay()">×</button>
+    <h2>Lösung prüfen</h2>
+
+    <p>Wie viele Streichhölzer sind in einer Schachtel?</p>
+
+    <input id="studentAnswer" type="number" inputmode="numeric" placeholder="Deine Lösung" />
+
+    <button id="checkButton" class="check-btn" onclick="checkStudentAnswer()">Prüfen</button>
+
+    <div id="solutionFeedback"></div>
+    <button id="nextTaskButton" class="next-task-btn hidden" onclick="goToNextTask()">
+  Nächste Aufgabe
+    </button>
+  </div>
+</div>
+<!-- Ende Overlay für die Lösungseingabe -->
+    <section class="equation-wrap">
+      <div class="side" id="leftSide" data-side="left">
+        <div class="value-info" id="leftInfo"></div>
+        <div class="items" id="leftItems"></div>
+      </div>
+
+      <div class="equals"></div>
+
+      <div class="side" id="rightSide" data-side="right">
+        <div class="value-info" id="rightInfo"></div>
+        <div class="items" id="rightItems"></div>
+      </div>
+    </section>
+
+    <section id="trash" class="trash">
+      <div class="trash-title">Ablage</div>
+      <small>Tippe oben auf ein Teil, um es hier abzulegen.</small>
+      <div id="returnHint" class="return-hint">Jetzt eine der beiden Tischhälften antippen, um das markierte Teil zurückzulegen.</div>
+      <div id="removedItems" class="removed-items"></div>
+    </section>
+  </main>
+
+  <script src="aufgaben.js"></script>
+  <script src="arbeitsanweisung.js"></script>
+
+  <script>
+    let task = { leftBoxes: 1, leftMatches: 3, rightBoxes: 0, rightMatches: 7, boxValue: 4 };
+    let state = structuredClone(task);
+    let removedItems = [];
+    let selectedRemovedIndex = null;
+    let lastStateEqual = true;
+    let currentTaskNumber = 1;
+
+    function calculateBoxValue(t) {
+      const boxDifference = t.leftBoxes - t.rightBoxes;
+      const matchDifference = t.rightMatches - t.leftMatches;
+
+      if (boxDifference === 0) return null;
+
+      const value = matchDifference / boxDifference;
+      return Number.isInteger(value) && value >= 0 ? value : null;
+    }
+
+    function loadTask(newTask) {
+      task = structuredClone(newTask);
+      task.boxValue = calculateBoxValue(task);
+      selectedRemovedIndex = null;
+      resetTask();
+    }
+
+    function resetTask() {
+      state = structuredClone(task);
+      removedItems = [];
+      selectedRemovedIndex = null;
+      lastStateEqual = true;
+      render();
+      updateReturnHint();
+    }
+
+    function loadPreset(number) {
+  if (typeof aufgaben === "undefined" || !aufgaben[number]) {
+    alert("Aufgabe " + number + " wurde in aufgaben.js nicht gefunden.");
+    return;
+  }
+
+  currentTaskNumber = number;
+  loadTask(aufgaben[number]);
+  markActiveTaskButton(number);
+}
+
+function markActiveTaskButton(number) {
+  document.querySelectorAll(".task-switcher button").forEach(button => {
+    button.classList.remove("active-task");
+  });
+
+  const activeButton = document.getElementById("taskButton" + number);
+  if (activeButton) {
+    activeButton.classList.add("active-task");
+  }
+}
+
+    function render() {
+      renderSide("left");
+      renderSide("right");
+      renderRemovedItems();
+      checkEquality();
+      updateReturnHint();
+    }
+
+    function renderSide(side) {
+      const container = document.getElementById(side + "Items");
+      container.innerHTML = "";
+
+      const boxes = state[side + "Boxes"];
+      const matches = state[side + "Matches"];
+
+      for (let i = 0; i < boxes; i++) {
+        container.appendChild(createItem("box", side));
+      }
+
+      for (let i = 0; i < matches; i++) {
+        container.appendChild(createItem("match", side));
+      }
+
+      document.getElementById(side + "Info").textContent =
+        `${boxes} Box(en) und ${matches} Streichholz/Streichhölzer`;
+    }
+
+    function createItem(type, side) {
+      const el = document.createElement("div");
+      el.className = type + " pop-in";
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", type === "box" ? "Box entfernen" : "Streichholz entfernen");
+
+      el.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+        el.classList.remove("pop-in");
+        el.classList.add("pop-out");
+
+        setTimeout(() => {
+          removeOne(type, side);
+        }, 180);
+      });
+
+      return el;
+    }
+
+    function removeOne(type, side) {
+      const key = side + (type === "box" ? "Boxes" : "Matches");
+
+      if (state[key] > 0) {
+        state[key]--;
+        removedItems.push({ type, fromSide: side });
+        selectedRemovedIndex = null;
+        render();
+      }
+    }
+
+    function renderRemovedItems() {
+      const container = document.getElementById("removedItems");
+      container.innerHTML = "";
+
+      removedItems.forEach((item, index) => {
+        const el = document.createElement("div");
+        el.className = item.type + " pop-in";
+
+        if (index === selectedRemovedIndex) {
+          el.classList.add("selected");
+        }
+
+        el.setAttribute("role", "button");
+        el.setAttribute("aria-label", item.type === "box" ? "Box auswählen" : "Streichholz auswählen");
+
+        el.addEventListener("click", (event) => {
+          event.stopPropagation();
+          selectedRemovedIndex = selectedRemovedIndex === index ? null : index;
+          render();
+        });
+
+        container.appendChild(el);
+      });
+    }
+
+    function returnSelectedItem(targetSide) {
+      if (selectedRemovedIndex === null) return;
+
+      const item = removedItems[selectedRemovedIndex];
+      if (!item) return;
+
+      const key = targetSide + (item.type === "box" ? "Boxes" : "Matches");
+      state[key]++;
+
+      removedItems.splice(selectedRemovedIndex, 1);
+      selectedRemovedIndex = null;
+      render();
+    }
+
+    document.getElementById("leftSide").addEventListener("click", () => returnSelectedItem("left"));
+    document.getElementById("rightSide").addEventListener("click", () => returnSelectedItem("right"));
+
+    function updateReturnHint() {
+      const hasSelection = selectedRemovedIndex !== null;
+      document.getElementById("returnHint").classList.toggle("visible", hasSelection);
+      document.getElementById("leftSide").classList.toggle("return-target", hasSelection);
+      document.getElementById("rightSide").classList.toggle("return-target", hasSelection);
+    }
+
+    function checkEquality() {
+        // Keine automatische Rückmeldung mehr.
+  // Die Trennwand bleibt bewusst immer schwarz.
+    }
+
+    function getValue(side) {
+      if (task.boxValue === null) return NaN;
+      return state[side + "Boxes"] * task.boxValue + state[side + "Matches"];
+    }
+
+  function openSolutionOverlay() {
+  document.getElementById("nextTaskButton").classList.add("hidden");
+  document.getElementById("studentAnswer").value = "";
+  document.getElementById("solutionFeedback").textContent = "";
+  document.getElementById("solutionFeedback").className = "";
+  document.getElementById("solutionOverlay").classList.remove("hidden");
+  setTimeout(() => document.getElementById("studentAnswer").focus(), 100);
+}
+
+function closeSolutionOverlay() {
+  document.getElementById("solutionOverlay").classList.add("hidden");
+}
+
+function checkStudentAnswer() {
+  const answer = Number(document.getElementById("studentAnswer").value);
+  const feedback = document.getElementById("solutionFeedback");
+  const button = document.getElementById("checkButton");
+
+  if (answer === task.boxValue) {
+  feedback.textContent = "Antwort ist korrekt!";
+  feedback.className = "correct";
+  document.getElementById("nextTaskButton").classList.remove("hidden");
+  return;
+}
+
+  // falsche Antwort
+  feedback.textContent = "Deine Antwort stimmt leider nicht! Versuche es nochmal!";
+  feedback.className = "wrong";
+
+  // Button sperren
+  button.disabled = true;
+
+  let seconds = 15;
+  button.textContent = `Warte ${seconds}s`;
+
+  const interval = setInterval(() => {
+    seconds--;
+    button.textContent = `Warte ${seconds}s`;
+
+    if (seconds <= 0) {
+      clearInterval(interval);
+      button.disabled = false;
+      button.textContent = "Prüfen";
+    }
+  }, 1000);
+}
+
+
+  function goToNextTask() {
+  const nextTask = currentTaskNumber + 1;
+
+  if (aufgaben[nextTask]) {
+    closeSolutionOverlay();
+    loadPreset(nextTask);
+  } else {
+    document.getElementById("solutionFeedback").textContent =
+      "Super, du hast alle Aufgaben geschafft!";
+    document.getElementById("nextTaskButton").classList.add("hidden");
+  }
+}
+
+    
+    document.getElementById("questionText").innerHTML =
+  typeof instructionText !== "undefined"
+    ? instructionText
+    : "Wie viele Streichhölzer befinden sich in einer Box?";
+
+    loadPreset(1);
+  </script>
+</body>
+</html>
