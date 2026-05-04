@@ -118,11 +118,10 @@
   gap: 8px;
 }
 
-    .action-buttons {
+   .action-buttons {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin: 0 0 10px 0;
 }
 
 .action-buttons button {
@@ -178,6 +177,41 @@
   box-shadow: 0 0 0 4px rgba(139, 58, 46, 0.25);
 }
 
+.action-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 10px 0;
+}
+
+    .help-btn {
+  position: absolute;
+  right: 0;
+
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  padding: 0;
+
+  background: #f2c94c;
+  color: #5e241c;
+  border-radius: 14px;
+  font-size: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-btn:hover {
+  background: #e0b83f;
+}
+
+.hidden {
+  display: none !important;
+}
+    
     .solution-btn {
   background: var(--solution);
 }
@@ -528,17 +562,7 @@
 
     
     /* Overlay Hilfestellung */
-.help-btn {
-  background: var(--task-active);
-}
 
-.help-btn:hover {
-  background: var(--task-hover);
-}
-
-.hidden {
-  display: none !important;
-}
 
 .help-text {
   text-align: left;
@@ -770,6 +794,17 @@
     max-width: 200px;
     font-size: 20px;
   }
+
+  .action-row {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.help-btn {
+  position: static;
+  width: 46px;
+  height: 46px;
+}
 }
     
   </style>
@@ -799,10 +834,15 @@
          </section>
 
 
- <div class="action-buttons">
-  <button class="reset-btn" onclick="resetTask()">Zurücksetzen</button>
-  <button class="solution-btn" onclick="openSolutionOverlay()">Lösung prüfen</button>
-  <button id="helpButton" class="help-btn hidden" onclick="openHelpOverlay()">Hilfe</button>
+<div class="action-row">
+  <div class="action-buttons">
+    <button class="reset-btn" onclick="resetTask()">Zurücksetzen</button>
+    <button class="solution-btn" onclick="openSolutionOverlay()">Lösung prüfen</button>
+  </div>
+
+  <button id="helpButton" class="help-btn hidden" onclick="openHelpOverlay()" aria-label="Hilfe">
+    💡
+  </button>
 </div>
     
     <!-- Overlay für die Lösungseingabe -->
