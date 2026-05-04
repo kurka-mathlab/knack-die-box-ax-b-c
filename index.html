@@ -526,6 +526,41 @@
   display: none;
 }
 
+    
+    /* Overlay Hilfestellung */
+.help-btn {
+  background: var(--task-active);
+}
+
+.help-btn:hover {
+  background: var(--task-hover);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.help-text {
+  text-align: left;
+  font-size: 18px;
+  line-height: 1.35;
+  color: #2d2a26;
+  margin-top: 10px;
+}
+
+.help-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.help-actions button {
+  min-width: 160px;
+}
+
+    
     /* Tablet */
    @media (max-width: 850px) {
 
@@ -767,6 +802,7 @@
  <div class="action-buttons">
   <button class="reset-btn" onclick="resetTask()">Zurücksetzen</button>
   <button class="solution-btn" onclick="openSolutionOverlay()">Lösung prüfen</button>
+  <button id="helpButton" class="help-btn hidden" onclick="openHelpOverlay()">Hilfe</button>
 </div>
     
     <!-- Overlay für die Lösungseingabe -->
@@ -788,6 +824,27 @@
   </div>
 </div>
 <!-- Ende Overlay für die Lösungseingabe -->
+
+    
+    <!-- Overlay für die Hilfestellung -->
+
+<div id="helpOverlay" class="overlay hidden" onclick="closeHelpOverlay()">
+  <div class="overlay-box" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeHelpOverlay()">×</button>
+    <h2>Hilfe</h2>
+
+    <div id="helpText" class="help-text"></div>
+
+    <div id="helpActions" class="help-actions">
+      <button class="reset-btn" onclick="closeHelpOverlay()">Das reicht mir</button>
+      <button class="solution-btn" onclick="showSecondHint()">Gib mir noch einen Tipp!</button>
+    </div>
+  </div>
+</div>
+   <!-- Ende Overlay für die Hilfestellung -->
+
+
+    
     <section class="equation-wrap">
       <div class="side" id="leftSide" data-side="left">
         <div class="value-info" id="leftInfo"></div>
@@ -820,6 +877,7 @@
     let selectedRemovedIndex = null;
     let lastStateEqual = true;
     let currentTaskNumber = 1;
+    let helpTimer = null;               // Timer für das Einblenden des Hilfebuttons
 
     function calculateBoxValue(t) {
       const boxDifference = t.leftBoxes - t.rightBoxes;
@@ -856,6 +914,7 @@
   currentTaskNumber = number;
   loadTask(aufgaben[number]);
   markActiveTaskButton(number);
+  startHelpTimer();               // startet den Timer für das Einblenden des Hilfebuttons
 }
 
 function markActiveTaskButton(number) {
@@ -1045,6 +1104,43 @@ function checkStudentAnswer() {
       "Super, du hast alle Aufgaben geschafft!";
     document.getElementById("nextTaskButton").classList.add("hidden");
   }
+}
+
+
+
+    // Timer für das Einblenden des Hilfebuttons
+    function startHelpTimer() {
+  const helpButton = document.getElementById("helpButton");
+  if (!helpButton) return;
+
+  helpButton.classList.add("hidden");
+
+  if (helpTimer) {
+    clearTimeout(helpTimer);
+  }
+
+  helpTimer = setTimeout(() => {
+    helpButton.classList.remove("hidden");
+  }, 10000);                                            // 45000 = 45s 
+}
+
+function openHelpOverlay() {
+  document.getElementById("helpText").innerHTML =
+    "Zuerst entferne ich die losen Streichhölzer auf der linken Seite, dieselbe Anzahl entferne ich auch auf der rechten Seite.";
+
+  document.getElementById("helpActions").style.display = "flex";
+  document.getElementById("helpOverlay").classList.remove("hidden");
+}
+
+function closeHelpOverlay() {
+  document.getElementById("helpOverlay").classList.add("hidden");
+}
+
+function showSecondHint() {
+  document.getElementById("helpText").innerHTML =
+    "Als zweiten Schritt zerlege ich die Streichhölzer auf der rechten Seite gedanklich in gleich große Teilmengen. Die Anzahl dieser Teilmengen muss der Anzahl der Streichholzschachteln auf der linken Seite entsprechen. Danach entferne ich auf beiden Seiten die gleiche Anzahl an Teilmengen, bis links nur noch eine Streichholzschachtel übrig ist.";
+
+  document.getElementById("helpActions").style.display = "none";
 }
 
     
