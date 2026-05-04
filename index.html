@@ -813,9 +813,10 @@
 
  .action-row {
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between; /* links + rechts */
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .help-btn {
@@ -828,8 +829,8 @@
   
 .action-buttons {
   display: flex;
-  justify-content: space-between; /* ← wichtig */
-  width: 100%;
+  justify-content: flex-start; /* ← linksbündig */
+  gap: 8px;
 }
 
 .action-buttons {
@@ -839,9 +840,10 @@
 }
   
   .action-buttons button {
-  min-width: 120px;
-  padding: 9px 10px;
-  font-size: 13px;
+  height: 42px;          /* gleiche Höhe */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
   
