@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <title>Knack die Box – Gleichungen lösen</title>
 
   <style>
@@ -584,10 +585,9 @@
   min-width: 160px;
 }
 
-    .icon-bulb {
-  width: 26px;
-  height: 26px;
-  fill: #5e241c;
+    .material-icons {
+  font-size: 24px;
+  color: white;
 }
     
     /* Tablet */
@@ -845,10 +845,8 @@
     <button class="solution-btn" onclick="openSolutionOverlay()">Lösung prüfen</button>
   </div>
 
-  <button id="helpButton" class="help-btn hidden" onclick="openHelpOverlay()" aria-label="Hilfe">
-  <svg viewBox="0 0 24 24" class="icon-bulb">
-    <path d="M9 21h6v-1H9v1zm3-20C7.48 1 4 4.48 4 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-4.52-3.48-8-8-8zm2 13H10v-1h4v1zm1.31-3.9-.81.58V12H9.5v-1.32l-.81-.58C7.63 9.43 7 8.28 7 7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.28-.63 2.43-1.69 3.1z"/>
-  </svg>
+ <button id="helpButton" class="help-btn hidden" onclick="openHelpOverlay()" aria-label="Hilfe">
+  <span class="material-icons">lightbulb_outline</span>
 </button>
 </div>
     
